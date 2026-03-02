@@ -1,64 +1,34 @@
-# 🔥 SAVIX – Autonomous Fire Detection & Evacuation System
+# SAVIX 🔥
 
-Autonomous intelligent system for detecting people in smoke-filled environments using mmWave radar sensors and temperature monitoring.
+Autonomous system for detecting people in smoke-filled environments using mmWave radar (HLK-LD2410) and temperature monitoring (DS18B20).
 
-Developed for research and practical implementation in smart building fire safety systems.
-
----
-
-## 📌 Project Overview
-
-SAVIX is a distributed sensor-based system that:
-
-- Detects human presence using **HLK-LD2410 mmWave radar**
-- Monitors temperature via **DS18B20**
-- Transmits data via **MQTT**
-- Visualizes room state and evacuation routes
-- Calculates safest evacuation path using graph algorithms
-
-The system operates fully автономously within a local network.
+The system works locally via MQTT and displays evacuation routes on a web interface.
 
 ---
 
-## 🏗 System Architecture
-ESP32 + HLK-LD2410 + DS18B20
-│
-│ MQTT (JSON)
-▼
-Raspberry Pi (Flask Server)
-│
-▼
-Web Dashboard (SVG plan)
+## 🔧 Hardware
 
+- ESP32
+- HLK-LD2410 radar sensor
+- DS18B20 temperature sensor
+- Raspberry Pi
+- Mosquitto MQTT broker
 
 ---
 
-## 📁 Repository Structure
-SAVIX/
-├── server.py # Flask + MQTT server (Raspberry Pi)
-├── MQTT.ino # ESP32 firmware
-├── requirements.txt # Python dependencies
-├── templates/
-│ └── index.html # Web interface
-└── README.md
+## 📡 ESP32 (MQTT.ino)
 
----
+The ESP32:
+- Detects human presence
+- Measures temperature
+- Sends JSON data via MQTT
 
-# 🧠 1️⃣ Raspberry Pi – Server
+Example message:
 
-## Install dependencies
-
-```bash
-sudo apt update
-sudo apt install python3-pip -y
-pip3 install -r requirements.txt
-
-Run server
-python3 server.py
-
-Open in browser:
-http://RASPBERRY_IP:5000
-
-📦 requirements.txt
-flask
-paho-mqtt
+```json
+{
+  "room": "room1",
+  "human": true,
+  "distance": 140,
+  "temperature": 27.5
+}
