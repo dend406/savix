@@ -32,10 +32,10 @@ Example message:
   "distance": 140,
   "temperature": 27.5
 }
-
+---
 ## Topic:
 savix/room1
-
+---
 ## 🖥 Raspberry Pi (server.py)
 The Raspberry Pi:
 Receives MQTT data
@@ -45,15 +45,18 @@ Displays real-time building plan
 Run server:
 pip install flask paho-mqtt
 python3 server.py
+---
 
 ## Open:
 http://RASPBERRY_IP:5000
+---
 
 ## 🧠 Evacuation Logic
 Rooms are modeled as a graph
 Temperature defines risk cost
 Dijkstra algorithm finds safest path
 Routes are highlighted dynamically
+---
 
 ## 🚀 Features
 ✔ Smoke-resistant human detection
@@ -61,3 +64,4 @@ Routes are highlighted dynamically
 ✔ Real-time web interface
 ✔ Safe evacuation routing
 ✔ Fully local system
+---
