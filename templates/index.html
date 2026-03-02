@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>SAVIX Fire System</title>
+
+<style>
+body {
+    background:#111;
+    color:white;
+    font-family:Arial;
+    text-align:center;
+}
+
+svg {
+    background:#1a1a1a;
+    margin-top:20px;
+}
+
+.room {
+    stroke:white;
+    stroke-width:4;
+    fill:#333;
+}
+
+.safe { fill:#2ecc71 !important; }
+.danger { fill:#e74c3c !important; }
+
+.label {
+    fill:white;
+    font-size:16px;
+}
+
+.human {
+    font-size:35px;
+    fill:yellow;
+}
+
+.route {
+    stroke:lime;
+    stroke-width:8;
+    stroke-dasharray:15,6;
+    display:none;
+}
+
+.exit-route {
+    stroke:yellow;
+    stroke-width:10;
+    stroke-dasharray:20,8;
+    display:none;
+}
+</style>
+</head>
+<body>
+
+<h2>SAVIX – Safe Evacuation System</h2>
+<div id="time"></div>
+
+<svg viewBox="0 0 900 600" width="900">
+
+    <!-- ROOMS -->
+    <rect id="room1" x="50" y="50" width="300" height="200" class="room"/>
+    <text x="150" y="40" class="label">Room 1</text>
+    <text id="temp_room1" x="70" y="80" class="label"></text>
+    <text id="human_room1" x="180" y="150" class="human" style="display:none;">👤</text>
+
+    <rect id="room2" x="450" y="50" width="300" height="200" class="room"/>
+    <text x="550" y="40" class="label">Room 2</text>
+    <text id="temp_room2" x="470" y="80" class="label"></text>
+    <text id="human_room2" x="580" y="150" class="human" style="display:none;">👤</text>
+
+    <rect id="room3" x="50" y="350" width="300" height="200" class="room"/>
+    <text x="150" y="340" class="label">Room 3</text>
+    <text id="temp_room3" x="70" y="380" class="label"></text>
+    <text id="human_room3" x="180" y="450" class="human" style="display:none;">👤</text>
+
+    <rect id="room4" x="450" y="350" width="300" height="200" class="room"/>
+    <text x="550" y="340" class="label">Room 4</text>
+    <text id="temp_room4" x="470" y="380" class="label"></text>
+    <text id="human_room4" x="580" y="450" class="human" style="display:none;">👤</text>
+
+    <!-- CORRIDOR -->
+    <rect id="corridor" x="350" y="50" width="100" height="500" class="room"/>
+    <text x="355" y="40" class="label">Corridor</text>
+    <text id="temp_corridor" x="355" y="80" class="label"></text>
+    <text id="human_corridor" x="380" y="300" class="human" style="display:none;">👤</text>
+
+    <!-- EXIT -->
+    <rect x="800" y="250" width="80" height="100" fill="#006400" stroke="white" stroke-width="4"/>
+    <text x="805" y="240" class="label">EXIT</text>
+
+    <!-- ROUTES -->
+    <line id="path_room1" x1="350" y1="150" x2="400" y2="300" class="route"/>
+    <line id="path_room2" x1="450" y1="150" x2="400" y2="300" class="route"/>
+    <line id="path_room3" x1="350" y1="450" x2="400" y2="300" class="route"/>
+    <line id="path_room4" x1="450" y1="450" x2="400" y2="300" class="route"/>
+    <line id="path_exit" x1="400" y1="300" x2="800" y2="300" class="exit-route"/>
+
+</svg>
+
+<script>
+async function update() {
+
+    const response = await fetch('/data');
+    const data = await response.json();
+
+    document.getElementById("time").innerText = data.time;
+
+    for (let room in data.rooms) {
+
+        let info = data.rooms[room];
+
+        let element = document.getElementById(room);
+        if (element) {
+            element.classList.remove("safe","danger");
+            element.classList.add(info.presence ? "danger" : "safe");
+        }
+
+        let tempText = document.getElementById("temp_" + room);
+        if (tempText) {
+            tempText.textContent = "Temp: " + info.temperature.toFixed(1) + " °C";
+        }
+
+        let human = document.getElementById("human_" + room);
+        if (human) {
+            human.style.display = info.presence ? "block" : "none";
+        }
+    }
+
+    // маршрути
+    document.getElementById("path_exit").style.display = "none";
+    ["room1","room2","room3","room4"].forEach(r=>{
+        document.getElementById("path_" + r).style.display = "none";
+    });
+
+    if (data.routes) {
+
+        for (let start in data.routes) {
+
+            if (data.routes[start].length > 1) {
+                document.getElementById("path_" + start).style.display = "block";
+                document.getElementById("path_exit").style.display = "block";
+            }
+        }
+    }
+}
+
+setInterval(update, 1000);
+</script>
+
+</body>
+</html>
